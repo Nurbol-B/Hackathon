@@ -54,7 +54,7 @@ public class UsersImpl  implements UsersService {
         if (optionalUsers.isPresent()){
             Users existingUsers = optionalUsers.get();
             existingUsers.setId(users.getId());
-            existingUsers.setName(users.getName());
+            existingUsers.setUserName(users.getUserName());
             return usersRepo.save(existingUsers).getId();
         }else{
             throw new NullPointerException(String.format("Пользователь с id %s не найдена", users.getId()));

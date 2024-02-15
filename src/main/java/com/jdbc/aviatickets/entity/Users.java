@@ -13,7 +13,7 @@ public class Users {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-    private String name;
+    private String userName;
     private Date removeDate;
     @OneToMany
     private List<Flights> flightsList;

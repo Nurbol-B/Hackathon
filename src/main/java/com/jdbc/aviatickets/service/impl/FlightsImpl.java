@@ -39,8 +39,8 @@ public class FlightsImpl implements FlightsService {
     @Override
     public Integer save(Flights flights) throws NullPointerException {
         if (flights.getId() == null) {
-            Flights savedBook = flightsRepo.save(flights);
-            return savedBook.getId();
+            Flights savedFlights = flightsRepo.save(flights);
+            return savedFlights.getId();
         } else {
             return update(flights);
         }

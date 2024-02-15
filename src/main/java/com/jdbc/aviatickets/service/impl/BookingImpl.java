@@ -10,6 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.awt.print.Book;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -24,7 +27,7 @@ public class BookingImpl implements BookingService {
             throw  new NullPointerException(String.format("Рейс с id %s не найдена", flightId));
         }
         if(flights.getAvailableSeats() <= 0){
-            throw  new NullPointerException(String.format("Нет свободных рейсов на рейсе %s", flightId));
+            throw  new NullPointerException(String.format("Нет свободных мест на рейсе %s", flightId));
 
         }
         flights.setAvailableSeats(flights.getAvailableSeats()-1);
@@ -37,4 +40,23 @@ public class BookingImpl implements BookingService {
         bookingRepository.save(booking);
         return booking;
     }
+
+    @Override
+    public List<Booking> getAll() {
+        return bookingRepository.findAll();
+    }
+
+    @Override
+    public String deleteById(Integer id) {
+        Optional<Booking> optionalBooking = bookingRepository.findById(id);
+
+        if (optionalBooking.isPresent()) {
+            Booking booking = optionalBooking.get();
+            booking.setRemoveDate(new Date(System.currentTimeMillis()));
+            bookingRepository.save(booking);
+
+        } else throw new NullPointerException(String.format("Бронь с id %s не найдена", id));
+        return "Deleted";
+    }
+
 }
