@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Date;
 
 @Data
@@ -20,7 +21,7 @@ public class Flights {
     private String from;
     @Column(name = "destination")
     private String to;
-    private Date timeOfFlight;
+    private Timestamp timeOfFlight;
     private Date removeDate;
     private Integer availableSeats;
     @ManyToOne

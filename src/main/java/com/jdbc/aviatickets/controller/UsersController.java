@@ -2,6 +2,7 @@ package com.jdbc.aviatickets.controller;
 
 import com.jdbc.aviatickets.entity.Flights;
 import com.jdbc.aviatickets.entity.Users;
+import com.jdbc.aviatickets.service.MailService;
 import com.jdbc.aviatickets.service.UsersService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.aop.target.LazyInitTargetSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.List;
 @RequestMapping("/users")
 public class UsersController {
     private final UsersService usersService;
+    private final MailService mailService;
 
     @Operation(summary = "Этот роут возвращает весь список пользователей")
 
@@ -58,4 +61,30 @@ public class UsersController {
     public List<Flights> getTicketsByUserName(@PathVariable String name) {
         return usersService.findTicketsByUsersName(name);
     }
+    @Operation(summary = "Этот роут выполняет функцию регистрацию пользователей")
+
+    @PostMapping("/registration")
+    public Integer registration (@RequestBody Users users){
+        return usersService.registration(users);
+    }
+    @Operation(summary = "Этот роут выполняет функцию отправки писем на электронную почту пользователям")
+
+    @PostMapping("/send-mail")
+    public String send() {
+
+
+        Users user =  new Users();
+        user.setFullName("Mukul");
+        user.setUsername("Jaiswal");
+        user.setEmail("mistaru@bk.ru");
+
+
+        try {
+            mailService.sendEmailForRegistration(user);
+        } catch (MailException mailException) {
+            System.out.println(mailException);
+        }
+        return "Congratulations! Your mail has been send to the user.";
+    }
+
 }

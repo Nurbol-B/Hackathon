@@ -17,6 +17,7 @@ import java.util.Optional;
 
 public class UsersImpl  implements UsersService {
     private final UsersRepo usersRepo;
+    private final MailImpl mail;
 
     @Override
     public List<Users> getAll() {
@@ -54,7 +55,11 @@ public class UsersImpl  implements UsersService {
         if (optionalUsers.isPresent()){
             Users existingUsers = optionalUsers.get();
             existingUsers.setId(users.getId());
-            existingUsers.setUserName(users.getUserName());
+            existingUsers.setUsername(users.getUsername());
+            existingUsers.setFullName(users.getFullName());
+            existingUsers.setEmail(users.getEmail());
+            existingUsers.setPassword(users.getPassword());
+
             return usersRepo.save(existingUsers).getId();
         }else{
             throw new NullPointerException(String.format("Пользователь с id %s не найдена", users.getId()));
@@ -62,12 +67,30 @@ public class UsersImpl  implements UsersService {
     }
     @Override
     public List<Flights> findTicketsByUsersName(String name) {
-        Users user = usersRepo.findByUserName(name);
+        Users user = usersRepo.findByUsername(name);
         if (user != null) {
             return user.getFlightsList();
         } else {
             return null;
         }
+    }
+
+    @Override
+    public Integer registration(Users model) {
+        Users newUser = new Users();
+
+        if (model.getPassword() == null || model.getPassword().isEmpty())
+            throw new NullPointerException("Пароль не подходит требованиям безопасности");
+
+        if (usersRepo.findByEmail(model.getEmail()).isPresent())
+            throw new RuntimeException(model.getEmail() + " -  электронная почта уже используется другим пользователем");
+
+        newUser.setUsername(model.getUsername());
+        newUser.setFullName(model.getFullName());
+        newUser.setEmail(model.getEmail());
+        newUser.setPassword(model.getPassword());
+        mail.sendEmailForRegistration(newUser);
+        return usersRepo.save(newUser).getId();
     }
 
 }

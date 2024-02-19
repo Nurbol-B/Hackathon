@@ -2,6 +2,7 @@ package com.jdbc.aviatickets.service.impl;
 
 import com.jdbc.aviatickets.entity.Booking;
 import com.jdbc.aviatickets.entity.Flights;
+import com.jdbc.aviatickets.entity.Users;
 import com.jdbc.aviatickets.enums.BookingStatus;
 import com.jdbc.aviatickets.repo.BookingRepo;
 import com.jdbc.aviatickets.repo.FlightsRepo;
@@ -9,7 +10,6 @@ import com.jdbc.aviatickets.service.BookingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Book;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +18,8 @@ import java.util.Optional;
 @Service
 public class BookingImpl implements BookingService {
     private final FlightsRepo flightRepository;
+    Users users = new Users();
+    private final MailImpl mail;
 
     private final BookingRepo bookingRepository;
     @Override
@@ -38,8 +40,16 @@ public class BookingImpl implements BookingService {
         booking.setFlightId(flightId);
         booking.setStatus(BookingStatus.BOOKED);
         bookingRepository.save(booking);
+
+        String subject = "Ваш рейс успешно забронирован";
+        String text = "Уважаемый " + users.getFullName() + ", ваш рейс успешно забронирован. " +
+                "Ваш вылет в " + flights.getTimeOfFlight()  + " часов." +
+                "Спасибо за выбор нашей компании.";
+
+        mail.flightBooking(users.getEmail(),subject,text);
         return booking;
     }
+
 
     @Override
     public List<Booking> getAll() {
@@ -56,6 +66,11 @@ public class BookingImpl implements BookingService {
             bookingRepository.save(booking);
 
         } else throw new NullPointerException(String.format("Бронь с id %s не найдена", id));
+
+        String subject = "Ваш бронь успешно удален.";
+        String text = "Уважаемый " + users.getFullName() + ", ваш бронь был успешно удален. ";
+        mail.flightBooking(users.getEmail(),subject,text);
+
         return "Deleted";
     }
 

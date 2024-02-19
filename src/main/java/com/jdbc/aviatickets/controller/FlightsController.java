@@ -17,7 +17,7 @@ import java.util.List;
 public class FlightsController {
     private final FlightsService flightsService;
 
-    @Operation(summary = "Этот роут возвращает весь список пользователей")
+    @Operation(summary = "Этот роут возвращает весь список рейсов")
 
     @GetMapping("/all")
     public List<Flights> getAllFlights() {
@@ -42,10 +42,10 @@ public class FlightsController {
             return -1;
         }
     }
-    @Operation(summary = "Этот роут удаляет пользователей по айди")
+    @Operation(summary = "Этот роут удаляет рейсы по айди")
 
     @DeleteMapping("/{id}")
-    public String deleteFlight(@PathVariable Integer id) {
+    public String deleteFlight(@RequestParam Integer id) {
         return flightsService.deleteById(id);
     }
     @Operation(summary = "Этот роут находит  рейсы по пункту назначения. ")

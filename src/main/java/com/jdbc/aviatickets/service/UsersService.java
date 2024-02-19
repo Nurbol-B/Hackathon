@@ -13,5 +13,7 @@ public interface UsersService {
     public String deleteById(int id);
     public Integer save(Users users) throws NullPointerException;
     public List <Flights> findTicketsByUsersName(String name);
+    Integer registration(Users users);
+
 
 }
